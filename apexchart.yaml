@@ -13,8 +13,8 @@ apex_config:
   chart:
     stacked: false
   stroke:
-    # dashArray pro Serie: PV, Netz, Einsp, Batt, Haus, Basis(gestrichelt), WP
-    dashArray: [0, 0, 0, 0, 0, 6, 0]
+    # dashArray pro Serie: PV, Netz, Batt, Haus, Basis(gestrichelt), WP, Einsp
+    dashArray: [0, 0, 0, 0, 6, 0, 0]
   xaxis:
     type: datetime
     labels:
@@ -43,15 +43,6 @@ series:
     stroke_width: 2
     data_generator: |
       return entity.attributes.forecast.map(f => [new Date(f.ts).getTime(), f.netz]);
-
-  - entity: sensor.strom_energieprognose
-    name: Einspeisung
-    type: area
-    color: "#9B59B6"
-    stroke_width: 2
-    opacity: 0.3
-    data_generator: |
-      return entity.attributes.forecast.map(f => [new Date(f.ts).getTime(), f.einsp]);
 
   - entity: sensor.strom_energieprognose
     name: Batterie
@@ -84,3 +75,12 @@ series:
     stroke_width: 2
     data_generator: |
       return entity.attributes.forecast.map(f => [new Date(f.ts).getTime(), f.wp]);
+
+  - entity: sensor.strom_energieprognose
+    name: Einspeisung
+    type: area
+    color: "#9B59B6"
+    stroke_width: 2
+    opacity: 0.6
+    data_generator: |
+      return entity.attributes.forecast.map(f => [new Date(f.ts).getTime(), f.einsp]);
