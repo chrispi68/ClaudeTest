@@ -49,35 +49,49 @@ public class HomeAssistantService
 
     public async Task SendEnergiePrognoseAsync(List<EnergyData> daten)
     {
-        string url = $"{_config.Url.TrimEnd('/')}/api/states/sensor.strom_energieprognose";
+        // 1. MQTT Discovery – registriert das Entity dauerhaft in HA
+        var discoveryConfig = new
+        {
+            name                    = "Strom Energieprognose",
+            unique_id               = "strom_energieprognose",
+            state_topic             = "strom_energieprognose/state",
+            json_attributes_topic   = "strom_energieprognose/attributes",
+            unit_of_measurement     = "kWh",
+            icon                    = "mdi:lightning-bolt"
+        };
+        await MqttPublishAsync(
+            "homeassistant/sensor/strom_energieprognose/config",
+            JsonSerializer.Serialize(discoveryConfig));
 
+        // 2. State: Zeitstempel der ersten Prognose-Stunde
+        await MqttPublishAsync(
+            "strom_energieprognose/state",
+            daten.First().Zeitstempel.ToString("yyyy-MM-ddTHH:mm:ss"));
+
+        // 3. Attribute: Prognosedaten (72 Einträge)
         var forecast = daten.Select(d => new
         {
-            ts   = d.Zeitstempel.ToString("yyyy-MM-ddTHH:mm:ss"),
-            pv   = Math.Round(d.PVErtrag,      3),
-            netz = Math.Round(d.Netzbezug,     3),
-            einsp = Math.Round(d.Einspeisung,  3),
-            batt = Math.Round(d.Batterie,      3),
-            haus = Math.Round(d.Hausverbrauch, 3),
+            ts    = d.Zeitstempel.ToString("yyyy-MM-ddTHH:mm:ss"),
+            pv    = Math.Round(d.PVErtrag,       3),
+            netz  = Math.Round(d.Netzbezug,      3),
+            einsp = Math.Round(d.Einspeisung,    3),
+            batt  = Math.Round(d.Batterie,       3),
+            haus  = Math.Round(d.Hausverbrauch,  3),
             basis = Math.Round(d.Basisverbrauch, 3),
-            wp   = Math.Round(d.Wärmepumpe,   3)
+            wp    = Math.Round(d.Wärmepumpe,     3)
         });
+        await MqttPublishAsync(
+            "strom_energieprognose/attributes",
+            JsonSerializer.Serialize(new { forecast }));
+    }
 
-        var payload = new
-        {
-            state = daten.First().Zeitstempel.ToString("yyyy-MM-ddTHH:mm:ss"),
-            attributes = new
-            {
-                friendly_name        = "Strom Energieprognose",
-                unit_of_measurement  = "kWh",
-                forecast             = forecast
-            }
-        };
-
+    private async Task MqttPublishAsync(string topic, string payload, bool retain = true)
+    {
+        string url = $"{_config.Url.TrimEnd('/')}/api/services/mqtt/publish";
+        var body = new { topic, payload, retain, qos = 1 };
         var content = new StringContent(
-            JsonSerializer.Serialize(payload),
+            JsonSerializer.Serialize(body),
             System.Text.Encoding.UTF8, "application/json");
-
         var response = await _httpClient.PostAsync(url, content);
         response.EnsureSuccessStatusCode();
     }
