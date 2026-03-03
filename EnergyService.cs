@@ -13,7 +13,8 @@ public class EnergyService
         List<PVPrognoseEintrag> pvPrognose,
         Dictionary<int, double> wärmepumpenverbrauch,
         Dictionary<int, double> hausverbrauch,
-        double initialBatterieladungKw = 0.0)
+        double initialBatterieladungKw = 0.0,
+        Dictionary<int, double>? aussentemperaturen = null)
     {
         _basisverbrauch = basisverbrauchKw;
         MaxBatteriekapazität = maxBatteriekapazitätKw;
@@ -38,7 +39,8 @@ public class EnergyService
                 MaxBatteriekapazität = maxBatteriekapazitätKw,
                 PVErtrag = pv?.PVEstimate ?? 0.0,
                 Wärmepumpe = wärmepumpenverbrauch.GetValueOrDefault(i, 0.0),
-                Hausverbrauch = hausverbrauch.GetValueOrDefault(i, 0.0)
+                Hausverbrauch = hausverbrauch.GetValueOrDefault(i, 0.0),
+                Aussentemperatur = aussentemperaturen?.GetValueOrDefault(i, 0.0) ?? 0.0
             });
         }
 
