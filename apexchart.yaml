@@ -42,9 +42,10 @@ series:
 
   - entity: sensor.strom_energieprognose
     name: Einspeisung
-    type: line
+    type: area
     color: "#9B59B6"
     stroke_width: 2
+    opacity: 0.3
     data_generator: |
       return entity.attributes.forecast.map(f => [new Date(f.ts).getTime(), f.einsp]);
 
