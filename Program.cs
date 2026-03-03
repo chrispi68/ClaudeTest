@@ -85,9 +85,11 @@ foreach (var gruppe in gruppenNachTag)
         int i = EnergyDataList.IndexOf(d);
         string marker = i == 0 ? "►" : " ";
         double gesamtverbrauch = d.Basisverbrauch + d.Hausverbrauch + d.Wärmepumpe;
-        Console.WriteLine(
-            $"║ {marker}{i,3} ║ {d.Zeitstempel:dd.MM. HH:mm}  ║ {d.PVErtrag,5:F2} kW ║ {d.Hausverbrauch,5:F2} kW ║ {d.Wärmepumpe,5:F2} kW ║ {d.Basisverbrauch,5:F2} kW ║ {gesamtverbrauch,5:F2} kW ║ {d.Batterie,5:F2} kWh║ {d.Einspeisung,5:F2} kW ║ {d.Netzbezug,5:F2} kW ║{d.Aussentemperatur,5:F1}°C ║"
-        );
+        Console.Write($"║ {marker}{i,3} ║ {d.Zeitstempel:dd.MM. HH:mm}  ║ {d.PVErtrag,5:F2} kW ║ {d.Hausverbrauch,5:F2} kW ║ {d.Wärmepumpe,5:F2} kW ║ {d.Basisverbrauch,5:F2} kW ║ {gesamtverbrauch,5:F2} kW ║ ");
+        Console.ForegroundColor = d.Batterie > 0 ? ConsoleColor.Green : ConsoleColor.Red;
+        Console.Write($"{d.Batterie,5:F2} kWh");
+        Console.ResetColor();
+        Console.WriteLine($"║ {d.Einspeisung,5:F2} kW ║ {d.Netzbezug,5:F2} kW ║{d.Aussentemperatur,5:F1}°C ║");
     }
 
     // Tagessummen
