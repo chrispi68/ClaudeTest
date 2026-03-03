@@ -59,7 +59,7 @@ var hausverbrauch = new HausverbrauchService(standortLat, standortLon, istJemand
 // Service initialisieren
 var service = new EnergyService(
     basisverbrauchKw: 0.6,
-    maxBatteriekapazitätKw: 15.0,
+    maxBatteriekapazitätKw: config.MaxBatteriekapazitätKwh,
     pvPrognose: pvPrognose,
     wärmepumpenverbrauch: wärmepumpenverbrauch,
     hausverbrauch: hausverbrauch,
@@ -70,7 +70,7 @@ var service = new EnergyService(
 var EnergyDataList = service.EnergyDataList;
 
 Console.WriteLine("╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
-Console.WriteLine($"║  Energieprognose – nächste 72 Stunden   |  Max. Batteriekapazität: {service.MaxBatteriekapazität,4:F1} kW                                   ║");
+Console.WriteLine($"║  Energieprognose – nächste 72 Stunden   |  Max. Batteriekapazität: {config.MaxBatteriekapazitätKwh,4:F1} kWh                                  ║");
 Console.WriteLine("╠══════╦══════════════╦══════════╦══════════╦══════════╦══════════╦══════════╦══════════╦══════════╦══════════╦════════╣");
 Console.WriteLine("║  Std ║ Datum/Zeit   ║ PV  (kW) ║Haus (kW) ║ WP  (kW) ║Basis(kW) ║Verb.(kW) ║Batt.(kWh)║Einsp(kW) ║Netz (kW) ║Außen°C ║");
 Console.WriteLine("╠══════╬══════════════╬══════════╬══════════╬══════════╬══════════╬══════════╬══════════╬══════════╬══════════╬════════╣");

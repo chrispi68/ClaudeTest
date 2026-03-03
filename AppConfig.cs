@@ -3,6 +3,7 @@ namespace ClaudeTest;
 public class AppConfig
 {
     public HomeAssistantConfig HomeAssistant { get; set; } = new();
+    public double MaxBatteriekapazitätKwh { get; set; } = 15.0;
 }
 
 public class HomeAssistantConfig

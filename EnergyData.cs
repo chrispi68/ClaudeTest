@@ -10,6 +10,5 @@ public class EnergyData
     public double Einspeisung { get; set; }
     public double Netzbezug { get; set; }
     public double Basisverbrauch { get; set; }
-    public double MaxBatteriekapazität { get; set; }
     public double Aussentemperatur { get; set; }
 }

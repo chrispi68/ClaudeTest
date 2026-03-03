@@ -36,7 +36,6 @@ public class EnergyService
             {
                 Zeitstempel = stunde,
                 Basisverbrauch = _basisverbrauch,
-                MaxBatteriekapazität = maxBatteriekapazitätKw,
                 PVErtrag = pv?.PVEstimate ?? 0.0,
                 Wärmepumpe = wärmepumpenverbrauch.GetValueOrDefault(i, 0.0),
                 Hausverbrauch = hausverbrauch.GetValueOrDefault(i, 0.0),
