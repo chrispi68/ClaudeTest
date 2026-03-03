@@ -4,10 +4,13 @@ header:
   show: true
 graph_span: 72h
 span:
-  start: now
+  start: hour
 apex_config:
   chart:
     stacked: false
+  stroke:
+    # dashArray pro Serie: PV, Netz, Einsp, Batt, Haus, Basis(gestrichelt), WP
+    dashArray: [0, 0, 0, 0, 0, 6, 0]
   xaxis:
     type: datetime
     labels:
@@ -66,9 +69,6 @@ series:
     type: line
     color: "#E67E22"
     stroke_width: 1
-    apex_config:
-      stroke:
-        dashArray: 6
     data_generator: |
       return entity.attributes.forecast.map(f => [new Date(f.ts).getTime(), f.basis]);
 
