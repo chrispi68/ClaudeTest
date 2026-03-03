@@ -12,6 +12,10 @@ double initialBatterieladung = 0.0;
 var pvPrognose = new List<PVPrognoseEintrag>();
 var wärmepumpenverbrauch = new Dictionary<int, double>();
 var aussentemperaturen = new Dictionary<int, double>();
+double standortLat = 50.5;  // Fallback: Mitte Deutschlands
+double standortLon = 10.0;
+bool istJemandZuhause = true;
+
 try
 {
     var haService = new HomeAssistantService(config.HomeAssistant);
@@ -35,20 +39,21 @@ try
         w => w.Temperatur);
 
     wärmepumpenverbrauch = new WärmepumpeService(wpKonfig).BerechnePrognose(aussentemperaturen);
+
+    var standort = await haService.GetStandortAsync();
+    standortLat = standort.Latitude;
+    standortLon = standort.Longitude;
+    Console.WriteLine($"Standort:                           {standortLat:F4}°N, {standortLon:F4}°E");
+
+    istJemandZuhause = await haService.GetIstJemandZuhauseAsync(config.HomeAssistant.AnwesenheitsSensor);
+    Console.WriteLine($"Anwesenheit:                        {(istJemandZuhause ? "Jemand zu Hause" : "Niemand zu Hause")}");
 }
 catch (Exception ex)
 {
     Console.WriteLine($"Warnung: HA nicht erreichbar ({ex.Message}). Starte mit Standardwerten.");
 }
 
-var hausverbrauch = new Dictionary<int, double>
-{
-    { 0, 0.8 }, { 1, 0.6 }, { 2, 0.5 }, { 3, 0.5 }, { 4, 0.5 },
-    { 5, 0.6 }, { 6, 1.2 }, { 7, 1.8 }, { 8, 1.5 }, { 9, 1.3 },
-    { 10, 1.2 }, { 11, 1.1 }, { 12, 1.3 }, { 13, 1.4 }, { 14, 1.3 },
-    { 15, 1.2 }, { 16, 1.4 }, { 17, 1.8 }, { 18, 2.1 }, { 19, 2.3 },
-    { 20, 2.0 }, { 21, 1.5 }, { 22, 1.0 }, { 23, 0.8 }
-};
+var hausverbrauch = new HausverbrauchService(standortLat, standortLon, istJemandZuhause).BerechnePrognose();
 
 // Service initialisieren
 var service = new EnergyService(

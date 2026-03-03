@@ -13,6 +13,7 @@ public class HomeAssistantConfig
     public List<string> PVSensoren { get; set; } = new();
     public WärmepumpeSensorenConfig Wärmepumpe { get; set; } = new();
     public string WetterSensor { get; set; } = string.Empty;
+    public string AnwesenheitsSensor { get; set; } = string.Empty;
 }
 
 public class WärmepumpeSensorenConfig

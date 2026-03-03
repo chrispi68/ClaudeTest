@@ -47,6 +47,22 @@ public class HomeAssistantService
         };
     }
 
+    public async Task<bool> GetIstJemandZuhauseAsync(string sensor)
+    {
+        string state = await GetStateAsync(sensor);
+        return state == "on";
+    }
+
+    public async Task<(double Latitude, double Longitude)> GetStandortAsync()
+    {
+        string url = $"{_config.Url.TrimEnd('/')}/api/config";
+        string json = await _httpClient.GetStringAsync(url);
+        using var doc = JsonDocument.Parse(json);
+        double lat = doc.RootElement.GetProperty("latitude").GetDouble();
+        double lon = doc.RootElement.GetProperty("longitude").GetDouble();
+        return (lat, lon);
+    }
+
     private async Task<string> GetStateAsync(string entityId)
     {
         string url = $"{_config.Url.TrimEnd('/')}/api/states/{entityId}";
