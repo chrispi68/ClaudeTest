@@ -9,4 +9,6 @@ public class EnergyData
     public double Batterie { get; set; }
     public double Einspeisung { get; set; }
     public double Netzbezug { get; set; }
+    public double Basisverbrauch { get; set; }
+    public double MaxBatteriekapazität { get; set; }
 }
