@@ -15,10 +15,11 @@ var aussentemperaturen = new Dictionary<int, double>();
 double standortLat = 50.5191;  // Fallback: Schleiden, Nordrhein-Westfalen
 double standortLon = 6.3977;
 bool istJemandZuhause = true;
+HomeAssistantService? haService = null;
 
 try
 {
-    var haService = new HomeAssistantService(config.HomeAssistant);
+    haService = new HomeAssistantService(config.HomeAssistant);
 
     initialBatterieladung = await haService.GetBatterieladungKwhAsync();
     Console.WriteLine($"Batterieladung aus Home Assistant:  {initialBatterieladung:F2} kWh");
@@ -112,4 +113,18 @@ foreach (var gruppe in gruppenNachTag)
         Console.WriteLine("╚══════╩══════════════╩══════════╩══════════╩══════════╩══════════╩══════════╩══════════╩══════════╩══════════╩════════╝");
     else
         Console.WriteLine("╠══════╬══════════════╬══════════╬══════════╬══════════╬══════════╬══════════╬══════════╬══════════╬══════════╬════════╣");
+}
+
+// Prognose an Home Assistant zurückspielen
+if (haService != null)
+{
+    try
+    {
+        await haService.SendEnergiePrognoseAsync(EnergyDataList);
+        Console.WriteLine("Prognose erfolgreich an Home Assistant übermittelt (sensor.strom_energieprognose).");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Warnung: Prognose konnte nicht übermittelt werden ({ex.Message}).");
+    }
 }

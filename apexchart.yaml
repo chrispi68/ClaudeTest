@@ -1,0 +1,81 @@
+type: custom:apexcharts-card
+header:
+  title: Strom Energieprognose (72h)
+  show: true
+graph_span: 72h
+span:
+  start: now
+apex_config:
+  chart:
+    stacked: false
+  xaxis:
+    type: datetime
+    labels:
+      datetimeUTC: false
+      format: dd.MM. HH:mm
+  yaxis:
+    - decimalsInFloat: 2
+      title:
+        text: kW / kWh
+  tooltip:
+    x:
+      format: dd.MM.yyyy HH:mm
+series:
+  - entity: sensor.strom_energieprognose
+    name: PV-Ertrag
+    type: column
+    color: "#FFD700"
+    opacity: 0.85
+    data_generator: |
+      return entity.attributes.forecast.map(f => [new Date(f.ts).getTime(), f.pv]);
+
+  - entity: sensor.strom_energieprognose
+    name: Netzbezug
+    type: line
+    color: "#FF3333"
+    stroke_width: 2
+    data_generator: |
+      return entity.attributes.forecast.map(f => [new Date(f.ts).getTime(), f.netz]);
+
+  - entity: sensor.strom_energieprognose
+    name: Einspeisung
+    type: line
+    color: "#9B59B6"
+    stroke_width: 2
+    data_generator: |
+      return entity.attributes.forecast.map(f => [new Date(f.ts).getTime(), f.einsp]);
+
+  - entity: sensor.strom_energieprognose
+    name: Batterie
+    type: line
+    color: "#27AE60"
+    stroke_width: 2
+    data_generator: |
+      return entity.attributes.forecast.map(f => [new Date(f.ts).getTime(), f.batt]);
+
+  - entity: sensor.strom_energieprognose
+    name: Hausverbrauch
+    type: line
+    color: "#E67E22"
+    stroke_width: 2
+    data_generator: |
+      return entity.attributes.forecast.map(f => [new Date(f.ts).getTime(), f.haus]);
+
+  - entity: sensor.strom_energieprognose
+    name: Basisverbrauch
+    type: line
+    color: "#E67E22"
+    stroke_width: 1
+    apex_config:
+      stroke:
+        dashArray: 6
+    data_generator: |
+      return entity.attributes.forecast.map(f => [new Date(f.ts).getTime(), f.basis]);
+
+  - entity: sensor.strom_energieprognose
+    name: Wärmepumpe
+    type: line
+    color: "#2E86C1"
+    stroke_width: 2
+    data_generator: |
+      return entity.attributes.forecast.map(f => [new Date(f.ts).getTime(), f.wp]);

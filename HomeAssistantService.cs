@@ -47,6 +47,41 @@ public class HomeAssistantService
         };
     }
 
+    public async Task SendEnergiePrognoseAsync(List<EnergyData> daten)
+    {
+        string url = $"{_config.Url.TrimEnd('/')}/api/states/sensor.strom_energieprognose";
+
+        var forecast = daten.Select(d => new
+        {
+            ts   = d.Zeitstempel.ToString("yyyy-MM-ddTHH:mm:ss"),
+            pv   = Math.Round(d.PVErtrag,      3),
+            netz = Math.Round(d.Netzbezug,     3),
+            einsp = Math.Round(d.Einspeisung,  3),
+            batt = Math.Round(d.Batterie,      3),
+            haus = Math.Round(d.Hausverbrauch, 3),
+            basis = Math.Round(d.Basisverbrauch, 3),
+            wp   = Math.Round(d.Wärmepumpe,   3)
+        });
+
+        var payload = new
+        {
+            state = daten.First().Zeitstempel.ToString("yyyy-MM-ddTHH:mm:ss"),
+            attributes = new
+            {
+                friendly_name        = "Strom Energieprognose",
+                unit_of_measurement  = "kWh",
+                forecast             = forecast
+            }
+        };
+
+        var content = new StringContent(
+            JsonSerializer.Serialize(payload),
+            System.Text.Encoding.UTF8, "application/json");
+
+        var response = await _httpClient.PostAsync(url, content);
+        response.EnsureSuccessStatusCode();
+    }
+
     public async Task<bool> GetIstJemandZuhauseAsync(string sensor)
     {
         string state = await GetStateAsync(sensor);
