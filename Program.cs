@@ -12,8 +12,8 @@ double initialBatterieladung = 0.0;
 var pvPrognose = new List<PVPrognoseEintrag>();
 var wärmepumpenverbrauch = new Dictionary<int, double>();
 var aussentemperaturen = new Dictionary<int, double>();
-double standortLat = 50.5;  // Fallback: Mitte Deutschlands
-double standortLon = 10.0;
+double standortLat = 50.5191;  // Fallback: Schleiden, Nordrhein-Westfalen
+double standortLon = 6.3977;
 bool istJemandZuhause = true;
 
 try
