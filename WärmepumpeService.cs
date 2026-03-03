@@ -11,12 +11,12 @@ public class WärmepumpeService
 
     /// <summary>
     /// Berechnet den stündlichen Verbrauch der Wärmepumpe basierend auf der Außentemperatur.
-    /// Bei >= 19°C nur Warmwasserbedarf (4 kWh/Tag gleichmäßig verteilt).
+    /// Bei >= 17°C nur Warmwasserbedarf (4 kWh/Tag gleichmäßig verteilt).
     /// Max. 2,1 kW pro Stunde.
     /// </summary>
     public static double BerechneStündlichenVerbrauch(double aussentemperatur)
     {
-        double daily = aussentemperatur >= 19.0
+        double daily = aussentemperatur >= 17.0
             ? 4.0
             : 4.0 + 25.54 * Math.Exp(-0.0309 * aussentemperatur);
 
