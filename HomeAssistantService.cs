@@ -49,26 +49,8 @@ public class HomeAssistantService
 
     public async Task SendEnergiePrognoseAsync(List<EnergyData> daten)
     {
-        // 1. MQTT Discovery – registriert das Entity dauerhaft in HA
-        var discoveryConfig = new
-        {
-            name                    = "Strom Energieprognose",
-            unique_id               = "strom_energieprognose",
-            state_topic             = "strom_energieprognose/state",
-            json_attributes_topic   = "strom_energieprognose/attributes",
-            unit_of_measurement     = "kWh",
-            icon                    = "mdi:lightning-bolt"
-        };
-        await MqttPublishAsync(
-            "homeassistant/sensor/strom_energieprognose/config",
-            JsonSerializer.Serialize(discoveryConfig));
+        string url = $"{_config.Url.TrimEnd('/')}/api/states/sensor.strom_energieprognose";
 
-        // 2. State: Zeitstempel der ersten Prognose-Stunde
-        await MqttPublishAsync(
-            "strom_energieprognose/state",
-            daten.First().Zeitstempel.ToString("yyyy-MM-ddTHH:mm:ss"));
-
-        // 3. Attribute: Prognosedaten (72 Einträge)
         var forecast = daten.Select(d => new
         {
             ts    = d.Zeitstempel.ToString("yyyy-MM-ddTHH:mm:ss"),
@@ -80,17 +62,20 @@ public class HomeAssistantService
             basis = Math.Round(d.Basisverbrauch, 3),
             wp    = Math.Round(d.Wärmepumpe,     3)
         });
-        await MqttPublishAsync(
-            "strom_energieprognose/attributes",
-            JsonSerializer.Serialize(new { forecast }));
-    }
 
-    private async Task MqttPublishAsync(string topic, string payload, bool retain = true)
-    {
-        string url = $"{_config.Url.TrimEnd('/')}/api/services/mqtt/publish";
-        var body = new { topic, payload, retain, qos = 1 };
+        var payload = new
+        {
+            state      = daten.First().Zeitstempel.ToString("yyyy-MM-ddTHH:mm:ss"),
+            attributes = new
+            {
+                friendly_name       = "Strom Energieprognose",
+                unit_of_measurement = "kWh",
+                forecast            = forecast
+            }
+        };
+
         var content = new StringContent(
-            JsonSerializer.Serialize(body),
+            JsonSerializer.Serialize(payload),
             System.Text.Encoding.UTF8, "application/json");
         var response = await _httpClient.PostAsync(url, content);
         response.EnsureSuccessStatusCode();
