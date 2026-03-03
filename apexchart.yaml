@@ -1,4 +1,8 @@
 type: custom:apexcharts-card
+section_mode: true
+grid_options:
+  columns: full
+  rows: 6
 header:
   title: Strom Energieprognose (72h)
   show: true
