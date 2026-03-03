@@ -32,7 +32,7 @@ series:
     name: PV-Ertrag
     type: column
     color: "#FFD700"
-    opacity: 0.85
+    opacity: 0.4
     data_generator: |
       return entity.attributes.forecast.map(f => [new Date(f.ts).getTime(), f.pv]);
 
@@ -79,8 +79,8 @@ series:
   - entity: sensor.strom_energieprognose
     name: Einspeisung
     type: area
-    color: "#9B59B6"
+    color: "#6C3483"
     stroke_width: 2
-    opacity: 0.6
+    opacity: 0.75
     data_generator: |
       return entity.attributes.forecast.map(f => [new Date(f.ts).getTime(), f.einsp]);
